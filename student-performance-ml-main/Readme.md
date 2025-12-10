@@ -11,10 +11,13 @@ An advanced machine learning system that predicts student exam scores using an *
 
 This project stands out through:
 
-- **🤖 Multi-Model Ensemble**: Combines Linear Regression, Random Forest, XGBoost, and Neural Network with performance-based weights
+- **🤖 Multi-Model Ensemble**: Combines Linear Regression, Random Forest, XGBoost, and Neural Network with **mathematically optimized** weights
+- **🔬 Optimization-Based Weighting**: Uses `scipy.optimize` to find exact weights that minimize validation error (not heuristics!)
 - **🔍 Explainable AI**: SHAP (SHapley Additive exPlanations) for model interpretability
-- **📊 Interactive Dashboard**: Beautiful Streamlit web app for live predictions and visualizations
+- **📊 Interactive Dashboard**: Beautiful Streamlit web app with **human-readable inputs** for live predictions
+- **🎯 Raw Input Processing**: Users enter values like "High" and "Male" instead of encoded numbers
 - **📈 Comprehensive Analysis**: Deep performance evaluation with multiple metrics
+- **💡 Student Profile Analysis**: Automated identification of strong points and improvement areas
 - **🎯 Production-Ready**: Modular code structure with model persistence and configuration
 
 ---
@@ -64,13 +67,14 @@ pip install -r requirements.txt
 ### 2. Train Models
 
 ```bash
-# Train all 4 models and create weighted ensemble
+# Train all 4 models and create optimized ensemble
 python ensemble_model.py
 ```
 
 This will:
 - Train Linear Regression, Random Forest, XGBoost, and Neural Network
-- Calculate optimal ensemble weights based on validation performance
+- Use **scipy.optimize** to find mathematically optimal ensemble weights
+- Guarantee ensemble performs at least as well as the best individual model
 - Save all models to `models/` directory
 - Generate performance comparison visualizations in `results/`
 
@@ -122,6 +126,11 @@ student-performance-ml/
 │   ├── shap_feature_importance_comparison.png
 │   └── model_comparison_results.png
 │
+├── docs/                             # Additional documentation
+│   ├── QUICKSTART.md                 # Step-by-step setup guide
+│   ├── OPTIMIZATION_GUIDE.md         # Ensemble optimization explained
+│   └── RAW_INPUT_GUIDE.md            # Input preprocessing details
+│
 ├── Notebooks/                        # Jupyter notebooks for exploration
 │   ├── preprocessing.ipynb.ipynb
 │   └── decision_tree_carrin.ipynb
@@ -132,16 +141,27 @@ student-performance-ml/
 │   ├── Random_Forest/
 │   └── xgboost/
 │
-├── ensemble_model.py                 # Main ensemble training script
+├── ensemble_model.py                 # Main ensemble training script (with optimization)
 ├── model_explainer.py                # SHAP explainability module
 ├── model_comparison.py               # Comprehensive model comparison
 ├── streamlit_app.py                  # Interactive web dashboard
+├── preprocessor.py                   # Raw input preprocessing for dashboard
 ├── utils.py                          # Shared utility functions
 │
 ├── requirements.txt                  # Python dependencies
 ├── environment.yml                   # Conda environment
 └── README.md                         # This file
 ```
+
+---
+
+## 📖 Additional Documentation
+
+For more detailed information, check out these guides:
+
+- **[Quick Start Guide](docs/QUICKSTART.md)** - Step-by-step setup and troubleshooting
+- **[Optimization Guide](docs/OPTIMIZATION_GUIDE.md)** - Deep dive into ensemble weighting mathematics
+- **[Raw Input Guide](docs/RAW_INPUT_GUIDE.md)** - How preprocessing transforms user inputs
 
 ---
 
@@ -169,10 +189,12 @@ student-performance-ml/
    - Batch normalization & dropout
    - Early stopping for optimal training
 
-5. **Weighted Ensemble**
-   - Combines all 4 models
-   - Weights based on validation RMSE
-   - Typically achieves best performance
+5. **Optimized Ensemble**
+   - Combines all 4 models intelligently
+   - **Mathematical optimization** using scipy.optimize.minimize
+   - Finds exact weights that minimize validation error
+   - **Guaranteed** to perform at least as well as best single model
+   - Uses SLSQP algorithm (Sequential Least Squares Programming)
 
 ### Explainability (SHAP)
 
@@ -185,7 +207,10 @@ student-performance-ml/
 
 - **🏠 Home**: Project overview and quick stats
 - **📊 Model Comparison**: Performance metrics and visualizations
-- **🎯 Make Predictions**: Interactive form to predict scores for custom student profiles
+- **🎯 Make Predictions**: Interactive form with **human-readable inputs** (dropdowns for categories, numbers for metrics)
+  - Automatic preprocessing from raw values ("High", "Male") to model format
+  - Student profile analysis showing strong points and improvement areas
+  - Live predictions from all 5 models simultaneously
 - **🔍 Feature Importance**: SHAP visualizations and analysis
 - **ℹ️ About**: Detailed methodology and documentation
 
@@ -205,26 +230,44 @@ student-performance-ml/
 
 ## 🔬 Methodology
 
-### Ensemble Strategy
+### Ensemble Strategy - Optimization-Based Weighting
 
-The weighted ensemble combines predictions using:
-
-```
-Ensemble Prediction = Σ (weight_i × prediction_i)
-```
-
-Where weights are calculated as:
+Instead of using heuristic formulas, we use **mathematical optimization** to find the best ensemble weights:
 
 ```
-weight_i = (1 / RMSE_i) / Σ(1 / RMSE_j)
+minimize:  RMSE(Ensemble Predictions)
+subject to: Σ weights = 1
+           0 ≤ weight_i ≤ 1
 ```
 
-This ensures better-performing models have more influence on the final prediction.
+The optimization process:
+1. Train all 4 models on training data
+2. Generate predictions on validation set
+3. Use `scipy.optimize.minimize` with SLSQP algorithm
+4. Find exact weights that minimize validation RMSE
+5. **Result**: Ensemble is guaranteed ≥ best single model
+
+**Example Output:**
+```
+Optimized Ensemble Weights:
+  Linear Regression    | Weight: 0.85
+  Random Forest        | Weight: 0.08
+  XGBoost              | Weight: 0.05
+  Neural Network       | Weight: 0.02
+
+Ensemble RMSE: 3.21 (vs Best Single: 3.25)
+```
+
+**Why This Works:**
+- If one model is significantly better, it gets most of the weight
+- If models are complementary, weights are balanced
+- Mathematically optimal - not a guess!
 
 ### Why Ensemble?
 
+- **Mathematically Guaranteed**: Optimization ensures ensemble ≥ best model
 - **Reduced Overfitting**: Different models make different errors
-- **Improved Accuracy**: Combines strengths of multiple approaches
+- **Improved Accuracy**: Captures complementary model strengths
 - **Robustness**: Less sensitive to outliers and anomalies
 - **Best Practice**: Used in winning solutions across ML competitions
 
@@ -371,7 +414,7 @@ This project is created for educational purposes as part of an ML course final p
 
 ## 📧 Contact
 
-For questions about this project, please contact through your course channels.
+For questions about this project, please contact through Email: sontakkerushikesh547@gmail.com
 
 ---
 

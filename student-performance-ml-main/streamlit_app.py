@@ -631,8 +631,9 @@ def about_page():
     
     ## 📧 Contact
     
-    For questions or collaborations, please reach out through your course instructor.
+    For questions or collaborations, please reach out through Email: sontakkerushikesh547@gmail.com.
     """)
+
 
 def main():
     """Main app function"""
